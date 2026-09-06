@@ -1,8 +1,9 @@
-import express, {Application,Request,Response} from "express";
+import express, {Application,NextFunction,Request,Response} from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
+import { AppError } from "../utils/appError";
 
 dotenv.config();
 
@@ -22,6 +23,9 @@ app.get('/api/health',(req:Request,res:Response)=>{
     })
 })
 
+app.use('*', (req: Request, res: Response, next: NextFunction) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+})
 const PORT = process.env.PORT || 5000
 
 connectDB().then(() => {
@@ -29,3 +33,4 @@ connectDB().then(() => {
     console.log(`Server is running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
   });
 });
+
