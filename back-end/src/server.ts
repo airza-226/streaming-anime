@@ -4,6 +4,7 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
 import { AppError } from "../utils/appError";
+import authRoutes from './routes/auth.routes'
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ app.get('/api/health',(req:Request,res:Response)=>{
         message:"Server is running"
     })
 })
+
+app.use('/api/v1/auth',authRoutes) 
 
 app.use('*', (req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
