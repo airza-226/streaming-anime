@@ -1,4 +1,7 @@
+import { Types } from "mongoose"
+
 export interface IEpisode{
+    animeId:Types.ObjectId
     episodeNumber:number,
     title:string,
     videoUrl:string,
