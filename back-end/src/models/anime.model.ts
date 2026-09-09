@@ -21,4 +21,4 @@ const animeSchema = new Schema<IAnime>({
 },
 {timestamps:true})
 
-export const anime = model<IAnime>('Anime',animeSchema)
+export const Anime = model<IAnime>('Anime',animeSchema)
