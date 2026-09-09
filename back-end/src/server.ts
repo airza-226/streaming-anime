@@ -2,14 +2,14 @@ import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import path from "path"; // 1. Tambahkan import ini
 import { connectDB } from "./config/db";
 import { AppError } from "./utils/appError"; 
 import authRoutes from './routes/auth.routes';
 import { errorHandler } from "./middlewares/error.middleware";
 import userRoutes from "./routes/user.routes";
+import animeRoutes from "./routes/anime.routes";
 dotenv.config();
-import animeRoutes from "./routes/anime.routes"
-
 const app: Application = express();
 app.use(cors({
     origin: process.env.FRONTEND_URL || "http://localhost:3000",
@@ -18,15 +18,18 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.get('/api/health', (req: Request, res: Response) => {
     res.status(200).json({
         success: true,
         message: "Server is running"
     });
 });
+
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/users',userRoutes)
-app.use('/api/v1/anime',animeRoutes)
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/anime', animeRoutes);
+
 app.use('*', (req: Request, res: Response, next: NextFunction) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });

@@ -4,7 +4,7 @@ import { AppError } from '../utils/appError';
 import { asyncHandler } from '../utils/asyncHandler';
 import { User } from '../models/user.model';
 
-
+type Role = 'admin' | 'user' | 'moderator'
 interface JwtPayload {
   id: string;
 }
@@ -39,3 +39,18 @@ export const protect = asyncHandler(
     }
   }
 );
+
+export const restrictTo = (...allowedRoles: Role[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return next(new AppError('You are not logged in', 401));
+    }
+    const hasPermission = allowedRoles.includes(req.user.role as Role);
+    if (!hasPermission) {
+      return next(
+        new AppError('You do not have permission to perform this action', 403)
+      );
+    }
+    next();
+  };
+};
