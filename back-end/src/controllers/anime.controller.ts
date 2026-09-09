@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { asyncHandler } from "../../utils/asyncHandler";
+import { asyncHandler } from "../utils/asyncHandler";
 import { Anime } from "../models/anime.model";
-import { AppError } from "../../utils/appError";
+import { AppError } from "../utils/appError";
 export const getAllAnime = asyncHandler(async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 12;
@@ -16,14 +16,13 @@ export const getAllAnime = asyncHandler(async (req: Request, res: Response) => {
   if (req.query.status) {
     filter.status = req.query.status;
   }
-
   const totalAnime = await Anime.countDocuments(filter);
   const animeList = await Anime.find(filter)
     .select("-episodes")
     .sort({ createAt: -1 })
     .skip(skip)
     .limit(limit);
-
+    
   res.status(200).json({
     success: true,
     results: animeList.length,
@@ -35,7 +34,6 @@ export const getAllAnime = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 });
-
 export const getAnimeBySlug = asyncHandler(
   async (req: Request, res: Response) => {
     const anime = await Anime.findOne({ slug: req.params.slug });
@@ -48,7 +46,6 @@ export const getAnimeBySlug = asyncHandler(
     });
   },
 );
-
 export const createAnime = asyncHandler(async (req: Request, res: Response) => {
   const newAnime = await Anime.create(req.body);
   res.status(200).json({

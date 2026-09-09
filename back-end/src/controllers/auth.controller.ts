@@ -1,8 +1,8 @@
 import {Request,Response} from "express"
 import jwt from "jsonwebtoken"
 import{User} from "../models/user.model"
-import { AppError } from "../../utils/appError"
-import {asyncHandler} from "../../utils/asyncHandler"
+import { AppError } from "../utils/appError"
+import {asyncHandler} from "../utils/asyncHandler"
 
 const signToken = (userId: string): string => {
   const secret = process.env.JWT_SECRET || 'fallback_secret';

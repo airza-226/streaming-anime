@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { User } from '../models/user.model';
-import { AppError } from '../../utils/appError';
-import { asyncHandler } from '../../utils/asyncHandler';
+import { AppError } from '../utils/appError';
+import { asyncHandler } from '../utils/asyncHandler';
 
 export const getUserProfile = asyncHandler(async (req: Request, res: Response) => {
   const user = await User.findById(req.user?.id);

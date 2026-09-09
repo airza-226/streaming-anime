@@ -3,9 +3,9 @@ import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
-import { AppError } from "../utils/appError"; 
+import { AppError } from "./utils/appError"; 
 import authRoutes from './routes/auth.routes';
-import { errorHandler } from "../middlewares/error.middleware";
+import { errorHandler } from "./middlewares/error.middleware";
 import userRoutes from "./routes/user.routes";
 dotenv.config();
 import animeRoutes from "./routes/anime.routes"
