@@ -38,7 +38,7 @@ export const login = asyncHandler(async(req:Request,res:Response)=>{
     throw new AppError("Please provide email and password",400)
   }
   const user = await User.findOne({email}).select("+password")
-  if(!user || (await user.comparePassword(password))) {
+  if(!user || !(await user.comparePassword(password))) {
     throw new AppError("Incorrect email or password",401)
   }
 

@@ -28,9 +28,7 @@ app.use('*', (req: Request, res: Response, next: NextFunction) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 app.use(errorHandler);
-
 const PORT = process.env.PORT || 5000;
-
 connectDB().then(() => {
     app.listen(PORT, () => {
         console.log(`Server is running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
