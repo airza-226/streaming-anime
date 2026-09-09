@@ -18,9 +18,7 @@ export const register = asyncHandler(async(req:Request, res:Response)=>{
     throw new AppError("Email already exists",400)
   }
   const newUser = await User.create({username,email,password})
-
   const token = signToken(newUser._id.toString())
-
   res.status(201).json({
     success:true,
     message:"User registered successfully",
