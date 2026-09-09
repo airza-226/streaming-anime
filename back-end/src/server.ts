@@ -6,7 +6,7 @@ import { connectDB } from "./config/db";
 import { AppError } from "../utils/appError"; 
 import authRoutes from './routes/auth.routes';
 import { errorHandler } from "../middlewares/error.middleware";
-
+import userRoutes from "./routes/userRouter";
 dotenv.config();
 
 const app: Application = express();
@@ -24,6 +24,7 @@ app.get('/api/health', (req: Request, res: Response) => {
     });
 });
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users',userRoutes)
 app.use('*', (req: Request, res: Response, next: NextFunction) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
