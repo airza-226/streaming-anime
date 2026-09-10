@@ -1,29 +1,25 @@
-import { Request, Response } from "express";
-import { asyncHandler } from "../utils/asyncHandler";
-import { Anime } from "../models/anime.model";
-import { AppError } from "../utils/appError";
-import { success } from "zod";
+import { Request, Response } from 'express';
+import slugify from 'slugify'
+import mongoose from 'mongoose';
+import { Anime } from '../models/anime.model';
+import { Episode } from '../models/episode.model';
+import { asyncHandler } from '../utils/asyncHandler';
+import { AppError } from '../utils/appError';
+import { APIFeatures } from '../utils/apiFeatures';
 export const getAllAnime = asyncHandler(async (req: Request, res: Response) => {
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 12;
-  const skip = (page - 1) * limit;
-  const filter: any = {};
-  if (req.query.search) {
-    filter.$text = { $search: req.query.search as string };
-  }
-  if (req.query.genre) {
-    filter.genres = req.query.genres;
-  }
-  if (req.query.status) {
-    filter.status = req.query.status;
-  }
-  const totalAnime = await Anime.countDocuments(filter);
-  const animeList = await Anime.find(filter)
-    .select("-episodes")
-    .sort({ createAt: -1 })
-    .skip(skip)
-    .limit(limit);
-
+  const features = new APIFeatures(Anime.find().select('-episodes'), req.query)
+    .search()
+    .filter()
+    .sort()
+    .paginate();
+  const [animeResult, totalResult] = await Promise.allSettled([
+    features.query,
+    Anime.countDocuments(),
+  ]);
+  const animeList = animeResult.status === 'fulfilled' ? animeResult.value : [];
+  const totalAnime = totalResult.status === 'fulfilled' ? totalResult.value : 0;
+  const page = Math.max(Number(req.query.page) || 1, 1);
+  const limit = Math.max(Number(req.query.limit) || 12, 1);
   res.status(200).json({
     success: true,
     results: animeList.length,
@@ -33,57 +29,67 @@ export const getAllAnime = asyncHandler(async (req: Request, res: Response) => {
       currentPage: page,
       limit,
     },
+    data: animeList,
   });
 });
-export const getAnimeBySlug = asyncHandler(
-  async (req: Request, res: Response) => {
-    const anime = await Anime.findOne({ slug: req.params.slug });
-    if (!anime) {
-      throw new AppError("Anime not found", 404);
-    }
-    res.status(200).json({
-      success: true,
-      data: anime,
-    });
-  },
-);
 export const createAnime = asyncHandler(async (req: Request, res: Response) => {
-  
-  let coverImagePath =''
-  if(req.file) {
-    coverImagePath = `/uploads/thumbnails/${req.file.filename}`
+  const { title } = req.body;
+  if (!title) {
+    throw new AppError('make sure include title', 400);
   }
-  const animeData = {
+  const slug = slugify(title, { lower: true, strict: true });
+  const existingAnime = await Anime.findOne({ slug });
+  if (existingAnime) {
+    throw new AppError('Anime with this title has already added', 400);
+  }
+
+  const newAnime = await Anime.create({
     ...req.body,
-    coverImage:coverImagePath
-  }
-  const newAnime = await Anime.create(animeData);
-  res.status(200).json({
+    slug,
+  });
+
+  res.status(201).json({
     success: true,
-    message: "Anime created successfully",
     data: newAnime,
   });
 });
-
 export const updateAnime = asyncHandler(async (req: Request, res: Response) => {
-  const anime = await Anime.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
+  const { id } = req.params;
+  if (req.body.title) {
+    req.body.slug = slugify(req.body.title, { lower: true, strict: true });
+  }
+  const updatedAnime = await Anime.findByIdAndUpdate(id, req.body, {
+    new: true, 
+    runValidators: true, 
   });
-  if (!anime) throw new AppError("Anime not found", 404);
+  if (!updatedAnime) {
+    throw new AppError('Anime not found', 404);
+  }
   res.status(200).json({
     success: true,
-    message: "Anime updated successfully",
-    data: anime,
+    data: updatedAnime,
   });
 });
-
 export const deleteAnime = asyncHandler(async (req: Request, res: Response) => {
-  const anime = await Anime.findByIdAndDelete(req.params.id);
-  if (!anime) throw new AppError("Anime not found", 404);
-  res.status(200).json({
-    success: true,
-    message: "Anime deleted successfully",
-    data: null,
-  });
+  const { id } = req.params;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const anime = await Anime.findById(id).session(session);
+    if (!anime) {
+      throw new AppError('Anime not found', 404);
+    }
+    await Episode.deleteMany({ anime: id }).session(session);
+    await Anime.findByIdAndDelete(id).session(session);
+    await session.commitTransaction();
+    res.status(200).json({
+      success: true,
+      message: 'Deleted successfully',
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
 });

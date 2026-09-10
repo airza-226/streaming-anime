@@ -10,7 +10,6 @@ export const createEpisode = asyncHandler(async (req: Request, res: Response) =>
   if (!animeExists) {
     throw new AppError('Anime not found with that ID', 404);
   }
-
   const episode = await Episode.create({
     animeId,
     episodeNumber,
@@ -18,7 +17,6 @@ export const createEpisode = asyncHandler(async (req: Request, res: Response) =>
     videoUrl,
     duration,
   });
-
   res.status(201).json({
     success: true,
     data: episode,
@@ -26,9 +24,7 @@ export const createEpisode = asyncHandler(async (req: Request, res: Response) =>
 });
 export const getEpisodesByAnime = asyncHandler(async (req: Request, res: Response) => {
   const { animeId } = req.params;
-
   const episodes = await Episode.find({ animeId }).sort({ episodeNumber: 1 });
-
   res.status(200).json({
     success: true,
     results: episodes.length,
