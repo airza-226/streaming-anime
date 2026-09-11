@@ -19,6 +19,15 @@ const animeSchema = new Schema<IAnime>({
     rating:{type:String,default:0,min:0,max:10},
     episodes:[episodeSchema]
 },
-{timestamps:true})
+{timestamps:true,
+    toJSON:{virtuals:true},
+    toObject:{virtuals:true}
+})
+
+animeSchema.virtual('episodes',{
+    ref:'Episode',
+    localField:'_id',
+    foreignField:'anime'
+})
 
 export const Anime = model<IAnime>('Anime',animeSchema)

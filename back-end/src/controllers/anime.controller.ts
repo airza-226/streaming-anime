@@ -93,3 +93,21 @@ export const deleteAnime = asyncHandler(async (req: Request, res: Response) => {
     session.endSession();
   }
 });
+
+export const getAnimeDetail = asyncHandler(async(req:Request,res:Response)=>{
+  const {identifier} = req.params
+  const isObjectId = mongoose.Types.ObjectId.isValid(identifier as string)
+  const query = isObjectId ? {_id:identifier} : {slug:identifier}
+  const anime = await Anime.findOne(query).populate({
+    path:'episodes',
+    select:'episodeNumber title videoUrl thumbnail releaseDate duration',
+    options:{sort:{episodeNumber:1}}
+  })
+  if(!anime) {
+    throw new AppError('Anime not found', 404)
+  }
+  res.status(200).json({
+    success:true,
+    data:anime
+  })
+})

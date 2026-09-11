@@ -1,4 +1,4 @@
-import { Types } from "mongoose"
+import { Types,model,Document, } from "mongoose"
 
 export interface IEpisode{
     animeId:Types.ObjectId
@@ -20,4 +20,14 @@ export interface IAnime extends Document {
     status:'Ongoing'| 'Completed'
     rating?:number;
     episodes:IEpisode[]
+}
+
+export interface IWatchHistory extends Document {
+  user: Types.ObjectId;
+  anime: Types.ObjectId;
+  episode: Types.ObjectId;
+  progress: number;
+  duration: number; 
+  isCompleted: boolean;
+  lastWatchedAt: Date;
 }
