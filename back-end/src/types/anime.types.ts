@@ -31,3 +31,11 @@ export interface IWatchHistory extends Document {
   isCompleted: boolean;
   lastWatchedAt: Date;
 }
+
+export type WatchListStatus = 'watching' | 'plan_to_watch' | 'completed' | 'on_hold' | 'dropped';
+
+export interface IWatchList extends Document {
+    user:Types.ObjectId
+    anime:Types.ObjectId
+    status:WatchListStatus
+}

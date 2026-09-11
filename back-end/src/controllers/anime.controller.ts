@@ -11,6 +11,7 @@ export const getAllAnime = asyncHandler(async (req: Request, res: Response) => {
     .search()
     .filter()
     .sort()
+    .limitFields()
     .paginate();
   const [animeResult, totalResult] = await Promise.allSettled([
     features.query,

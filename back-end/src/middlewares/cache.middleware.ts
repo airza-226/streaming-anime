@@ -8,14 +8,13 @@ export const cacheMiddleware = (durationInSeconds: number) => {
     try {
       const cachedData = await redis.get(key);
       if (cachedData) {
-        // CACHE HIT: Langsung kirim respon dari Redis
         return res.status(200).json(JSON.parse(cachedData));
       }
       const originalJson = res.json;
       res.json = function (body: any): Response {
         if (res.statusCode === 200 && body.success) {
           redis.set(key, JSON.stringify(body), 'EX', durationInSeconds).catch((err) => {
-            console.error('Gagal simpan cache ke Redis:', err.message);
+            console.error('Failed save cache in Redis:', err.message);
           });
         }
         return originalJson.call(this, body);

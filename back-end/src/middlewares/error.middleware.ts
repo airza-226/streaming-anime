@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../utils/appError";
+
 export const errorHandler = (
   err: Error | AppError,
   req: Request,
@@ -15,9 +16,8 @@ export const errorHandler = (
     message = err.message;
     status = err.status;
   } else if (err instanceof Error) {
-    message = err.message;
+    message = process.env.NODE_ENV === "development" ? err.message : "Something went wrong on our end";
   }
-
   if ((err as any).code === 11000) {
     statusCode = 400;
     const field = Object.keys((err as any).keyValue)[0];
@@ -29,8 +29,25 @@ export const errorHandler = (
     message = err.message;
     status = "fail";
   }
+  if (err.name === "CastError") {
+    statusCode = 400;
+    message = `Invalid ${(err as any).path}: ${(err as any).value}`;
+    status = "fail";
+  }
+  if (err.name === "JsonWebTokenError") {
+    statusCode = 401;
+    message = "Invalid token. Please log in again";
+    status = "fail";
+  }
+
+  if (err.name === "TokenExpiredError") {
+    statusCode = 401;
+    message = "Your token has expired. Please log in again";
+    status = "fail";
+  }
 
   console.error(`[Error] ${req.method} ${req.url} - ${message}`);
+
   res.status(statusCode).json({
     success: false,
     status,
