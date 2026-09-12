@@ -1,0 +1,6 @@
+{
+	"dependencies": {
+		"bullmq": "^6.3.4",
+		"fluent-ffmpeg": "^2.1.3"
+	}
+}

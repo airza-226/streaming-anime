@@ -1,13 +1,15 @@
 import { Types,model,Document, } from "mongoose"
-
-export interface IEpisode{
-    animeId:Types.ObjectId
-    episodeNumber:number,
-    title:string,
-    videoUrl:string,
-    duration:string,
-    releaseDate:Date
-
+export type EpisodeStatus = "pending" | "processing" | "ready" | "failed";
+export interface IEpisode extends Document {
+  animeId: Types.ObjectId;
+  episodeNumber: number;
+  title: string;
+  videoUrl?: string;     
+  duration?: number;       
+  status: EpisodeStatus;   
+  releaseDate?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IAnime extends Document {

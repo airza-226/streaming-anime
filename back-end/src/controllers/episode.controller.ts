@@ -9,10 +9,6 @@ export const createEpisode = asyncHandler(
   async (req: Request, res: Response) => {
     const { animeId, episodeNumber, title, videoUrl, duration } = req.body;
 
-    if (!animeId || !episodeNumber || !title) {
-      throw new AppError("Anime ID, episode number, and title are required", 400);
-    }
-
     const animeExists = await Anime.findById(animeId);
     if (!animeExists) {
       throw new AppError("Anime not found with that ID", 404);
@@ -39,30 +35,10 @@ export const createEpisode = asyncHandler(
   }
 );
 
-export const getEpisodesByAnime = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { animeId } = req.params;
-
-    const episodes = await Episode.find({ animeId }).sort({ episodeNumber: 1 });
-    if(!episodes) {
-      throw new AppError('Cannot find episode',404)
-    }
-    res.status(200).json({
-      success: true,
-      results: episodes.length,
-      data: episodes,
-    });
-  }
-);
-
 export const uploadEpisode = asyncHandler(
   async (req: Request, res: Response) => {
     const { animeId, title, episodeNumber } = req.body;
     const file = req.file;
-
-    if (!animeId || !title || !episodeNumber) {
-      throw new AppError("Anime ID, title, and episode number are required", 400);
-    }
 
     if (!file) {
       throw new AppError("Video file is required", 400);
@@ -95,6 +71,70 @@ export const uploadEpisode = asyncHandler(
       success: true,
       message: "Video uploaded successfully and added to transcoding queue",
       data: newEpisode,
+    });
+  }
+);
+export const getEpisodesByAnime = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { animeId } = req.params;
+
+    const episodes = await Episode.find({ animeId }).sort({ episodeNumber: 1 });
+
+    res.status(200).json({
+      success: true,
+      results: episodes.length,
+      data: episodes,
+    });
+  }
+);
+export const getEpisodeDetail = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const episode = await Episode.findById(id).populate("animeId", "title slug coverImage");
+    if (!episode) {
+      throw new AppError("Episode not found", 404);
+    }
+
+    res.status(200).json({
+      success: true,
+      data: episode,
+    });
+  }
+);
+
+export const updateEpisode = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const episode = await Episode.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!episode) {
+      throw new AppError("Episode not found", 404);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Episode updated successfully",
+      data: episode,
+    });
+  }
+);
+
+export const deleteEpisode = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const episode = await Episode.findByIdAndDelete(id);
+    if (!episode) {
+      throw new AppError("Episode not found", 404);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Episode deleted successfully",
     });
   }
 );

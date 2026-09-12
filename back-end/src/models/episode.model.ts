@@ -1,5 +1,6 @@
-import { Schema,model } from "mongoose";
+import { Schema, model } from "mongoose";
 import { IEpisode } from "../types/anime.types";
+
 const episodeSchema = new Schema<IEpisode>(
   {
     animeId: {
@@ -17,17 +18,21 @@ const episodeSchema = new Schema<IEpisode>(
     },
     videoUrl: {
       type: String,
-      required: [true, "Video stream URL is required"],
     },
     duration: {
+      type: Number,
+    },
+    status: {
       type: String,
+      enum: ["pending", "processing", "ready", "failed"],
+      default: "ready",
     },
   },
   {
     timestamps: true,
-  },
+  }
 );
 
-episodeSchema.index({animeId:1,episodeNumber:1},{unique:true})
+episodeSchema.index({ animeId: 1, episodeNumber: 1 }, { unique: true });
 
-export const Episode = model<IEpisode>('Episode',episodeSchema)
+export const Episode = model<IEpisode>("Episode", episodeSchema);
