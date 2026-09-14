@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 
 export type Theme = 'light' | 'black-purple' | 'black-green';
 
@@ -16,27 +16,26 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('black-purple');
-  const [mounted, setMounted] = useState(false); 
+  const hasHydrated = useRef(false);
+
   useEffect(() => {
-    setMounted(true);
+    hasHydrated.current = true;
     const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
     if (stored && THEMES.includes(stored)) {
       setThemeState(stored);
     }
   }, []);
+
   useEffect(() => {
-    if (mounted) {
+    if (hasHydrated.current) {
       document.documentElement.setAttribute('data-theme', theme);
     }
-  }, [theme, mounted]);
+  }, [theme]);
 
   const setTheme = (next: Theme) => {
     setThemeState(next);
     localStorage.setItem(STORAGE_KEY, next);
   };
-  if (!mounted) {
-    return <>{children}</>;
-  }
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>

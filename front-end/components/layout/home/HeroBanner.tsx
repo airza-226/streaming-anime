@@ -34,8 +34,6 @@ export function HeroBanner({ featured }: HeroBannerProps) {
       >
         <source src={featured.videoUrl} type="video/mp4" />
       </video>
-
-      {/* mobile: blur cuma nutup ~2/3 bawah (area teks), fade halus ke atas */}
       <div
         className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 sm:hidden"
         style={{
@@ -45,7 +43,6 @@ export function HeroBanner({ featured }: HeroBannerProps) {
           maskImage: 'linear-gradient(to top, black 0%, black 35%, transparent 85%)',
         }}
       />
-      {/* desktop: blur strip kiri seperti sebelumnya, video kanan tetap bersih */}
       <div
         className="pointer-events-none absolute inset-y-0 left-0 hidden w-3/5 sm:block"
         style={{
@@ -55,12 +52,10 @@ export function HeroBanner({ featured }: HeroBannerProps) {
           maskImage: 'linear-gradient(to right, black 0%, black 30%, transparent 70%)',
         }}
       />
-
-      {/* scrim gelap: arah atas-bawah di mobile, kiri-kanan di desktop */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent sm:bg-gradient-to-r sm:from-black/90 sm:via-black/30 sm:to-transparent" />
+      <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/85 via-black/15 to-transparent sm:bg-linear-to-r sm:from-black/90 sm:via-black/30 sm:to-transparent" />
 
       <div className="absolute inset-0 flex items-end px-4 pb-8 sm:items-center sm:px-6 sm:pb-0 lg:px-8">
-        <div className="mx-auto w-full max-w-7xl">
+        <div className="mx-auto w-full ">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}

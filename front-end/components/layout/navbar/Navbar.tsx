@@ -1,23 +1,32 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
+import clsx from 'clsx';
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 import { useLockBodyScroll } from '@/hooks/useLockBodyScroll';
 import { NavMenu } from './NavMenu';
 import { SearchBar } from './SearchBar';
-import { MenuIcon, XIcon } from "lucide-react";
+import { MenuIcon, XIcon } from 'lucide-react';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
 
   useOnClickOutside(headerRef, () => setIsMenuOpen(false));
   useEscapeKey(() => setIsMenuOpen(false));
   useLockBodyScroll(isMenuOpen);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 60);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
@@ -30,18 +39,25 @@ export default function Navbar() {
   };
 
   return (
-    <header
-      ref={headerRef}
-      className="sticky top-0 z-50 bg-transparent backdrop-blur-md"
-    >
+   <header
+  ref={headerRef}
+  className={clsx(
+    'sticky top-0 z-50 bg-transparent transition-all duration-300',
+    isScrolled ? 'backdrop-blur-md' : 'backdrop-blur-none'
+  )}
+>
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
-          
           <button
             onClick={toggleMenu}
             aria-label="Toggle menu"
             aria-expanded={isMenuOpen}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-300 transition-colors hover:bg-white/10 hover:text-white"
+            className={clsx(
+              'flex h-10 w-10 items-center justify-center rounded-full transition-colors',
+              isScrolled
+                ? 'text-foreground hover:bg-foreground/10'
+                : 'text-neutral-300 hover:bg-white/10 hover:text-white'
+            )}
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.span
@@ -56,12 +72,17 @@ export default function Navbar() {
               </motion.span>
             </AnimatePresence>
           </button>
+
           <Link href="/" className="flex shrink-0 items-center gap-2">
-            <span className="text-xl font-bold tracking-tight text-white">
+            <span
+              className={clsx(
+                'text-xl font-bold tracking-tight',
+                isScrolled ? 'text-foreground' : 'text-white'
+              )}
+            >
               Nover<span className="text-violet-500">Anime</span>
             </span>
           </Link>
-
         </div>
 
         <SearchBar isOpen={isSearchOpen} onOpenChange={handleSearchOpenChange} />

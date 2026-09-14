@@ -26,7 +26,7 @@ export function HeroCarousel({ items, intervalMs = 5000 }: HeroCarouselProps) {
   const current = items[activeIndex];
 
   return (
-    <div className="relative h-[60vh] min-h-90 w-full overflow-hidden sm:h-[70vh] sm:min-h-105 lg:h-[80vh]">
+    <div  className="relative h-[60vh] min-h-90 w-full overflow-hidden sm:h-[70vh] sm:min-h-105 lg:h-[80vh]">
       <AnimatePresence initial={false}>
         <motion.div
           key={current.id}
@@ -39,6 +39,8 @@ export function HeroCarousel({ items, intervalMs = 5000 }: HeroCarouselProps) {
           <HeroBanner featured={current} />
         </motion.div>
       </AnimatePresence>
+
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-linear-to-b from-transparent to-background sm:h-24" />
 
       <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2 sm:bottom-6">
         {items.map((item, index) => (
