@@ -86,7 +86,7 @@ export function HeroBanner({ featured }: HeroBannerProps) {
             <div className="mt-4 flex items-center gap-2 sm:mt-6 sm:gap-3">
               <button
                 className={clsx(
-                  'flex items-center gap-2 rounded-md bg-orange-500 px-4 py-2.5',
+                  'flex items-center gap-2 rounded-md bg-orange-500 px-4 py-2.5 cursor-pointer z-20' ,
                   'text-xs font-bold uppercase tracking-wide text-white',
                   'transition-colors hover:bg-orange-600 sm:px-6 sm:py-3 sm:text-sm'
                 )}
@@ -98,7 +98,7 @@ export function HeroBanner({ featured }: HeroBannerProps) {
               <button
                 aria-label="Info anime"
                 className={clsx(
-                  'flex h-9 w-9 items-center justify-center rounded-md',
+                  'flex h-9 w-9 items-center justify-center rounded-md z-20',
                   'border-2 border-orange-500 text-orange-500',
                   'transition-colors hover:bg-orange-500/10 sm:h-11 sm:w-11'
                 )}
