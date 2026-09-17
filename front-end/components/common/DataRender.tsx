@@ -1,23 +1,40 @@
 import React from "react";
 
-const DataRender = ({ loading, skeleton, data, empty, render }) => {
+interface DataRenderProps<T> {
+  loading: boolean;
+  skeleton?: React.ReactNode;
+  skeletonCount?: number;
+  data: T[] | null | undefined;
+  empty?: React.ReactNode;
+  render: (item: T, index: number) => React.ReactNode;
+}
+
+export function DataRender<T>({
+  loading,
+  skeleton,
+  data,
+  empty = "Data tidak ditemukan",
+  render,
+}: DataRenderProps<T>) {
   if (loading) {
+    if (!skeleton) return null;
     return (
       <>
-        {Array.from({ length: 6 }).map((_, i) => (
-            <div className="" key={i}>
-                <skeleton />
-            </div>
+        {Array.from({ length: 10 }).map((_, index) => (
+          <React.Fragment key={index}>{skeleton}</React.Fragment>
         ))}
       </>
     );
   }
-  if(!data) {
-    return <>
-    <p className="text-sm text-muted">Not found</p>
-    </>
+
+  if (!data || data.length === 0) {
+    if (typeof empty === "string") {
+      return <p className="text-sm text-muted">{empty}</p>;
+    }
+    return <>{empty}</>;
   }
-  return data.map(render)
-};
+
+  return <>{data.map((item, index) => render(item, index))}</>;
+}
 
 export default DataRender;

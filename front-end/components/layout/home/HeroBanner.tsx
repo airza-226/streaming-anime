@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Info, Volume2, VolumeX } from 'lucide-react';
 import clsx from 'clsx';
-import { Anime } from '@/types/anime';
+import { Anime } from '@/types/animeDetail';
 
 type HeroBannerProps = {
   featured: Anime;

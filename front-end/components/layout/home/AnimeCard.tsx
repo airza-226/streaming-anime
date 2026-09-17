@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Star, Clapperboard } from 'lucide-react';
-import { Anime } from '@/types/anime';
+import { Anime } from '@/types/animeDetail';
 
 type AnimeCardProps = {
   anime: Anime;

@@ -1,5 +1,5 @@
 import { LatestUpdateCard } from './LatestUpdateCard';
-import { Anime } from '@/types/anime';
+import { Anime } from '@/types/animeDetail';
 
 type LatestUpdatesGridProps = {
   title: string;

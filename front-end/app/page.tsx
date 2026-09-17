@@ -1,3 +1,4 @@
+import Login from "@/components/auth/Login";
 import { HeroCarousel } from "@/components/layout/home/HeroCarousel";
 import { TrendingRow } from "@/components/layout/home/TrendingRow";
 import Navbar from "@/components/layout/navbar/Navbar";
@@ -30,8 +31,7 @@ export default function HomePage() {
   return (
     <main>
       <Navbar />
-      <HeroCarousel items={featuredList} intervalMs={5000} />
-      <TrendingRow title="Trending Sekarang" items={trending} />
+      <Login />
       {/* row-row lain (New Release, Genre, dll) ditambah di sini nanti */}
     </main>
   );

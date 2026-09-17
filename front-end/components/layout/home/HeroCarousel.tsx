@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { HeroBanner } from './HeroBanner';
-import { Anime } from '@/types/anime';
+import { Anime } from '@/types/animeDetail';
 
 type HeroCarouselProps = {
   items: Anime[];

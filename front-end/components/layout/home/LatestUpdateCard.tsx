@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Clapperboard } from 'lucide-react';
-import { Anime } from '@/types/anime';
+import { Anime } from '@/types/animeDetail';
 import { formatRelativeTime } from '@/lib/formatRelativeTime';
 
 type LatestUpdateCardProps = {

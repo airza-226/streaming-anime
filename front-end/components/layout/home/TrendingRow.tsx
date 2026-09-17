@@ -1,5 +1,5 @@
 import { AnimeCard, } from './AnimeCard';
-import { Anime } from '@/types/anime';
+import { Anime } from '@/types/animeDetail';
 type TrendingRowProps = {
   title: string;
   items: Anime[];
