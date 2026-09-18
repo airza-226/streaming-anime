@@ -1,6 +1,4 @@
 import Login from "@/components/auth/Login";
-import { HeroCarousel } from "@/components/layout/home/HeroCarousel";
-import { TrendingRow } from "@/components/layout/home/TrendingRow";
 import Navbar from "@/components/layout/navbar/Navbar";
 
 const featuredList = [
@@ -32,7 +30,6 @@ export default function HomePage() {
     <main>
       <Navbar />
       <Login />
-      {/* row-row lain (New Release, Genre, dll) ditambah di sini nanti */}
     </main>
   );
 }

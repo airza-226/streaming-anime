@@ -1,23 +1,31 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { GenreFilter } from './GenreFilter';
-import { useGenreAnime } from '@/hooks/useGenreAnime';
-import { DataRender } from '@/common/components/DataRender';
-import { PosterGridSkeleton } from '@/common/components/skeletons/PosterGridSkeleton';
-import { Pagination } from '@/common/components/Pagination';
-import { AnimeCard } from '@/components/layout/home/AnimeCard';
 
+import { useGenreAnime } from '@/hooks/useGenreAnime';
+import DataRender from '@/components/common/DataRender';
+import { PosterGridSkeleton } from '@/components/common/components/skeletons/PosterGridSkeleton';
+import { Pagination } from '@/components/common/Pagination';
+import { AnimeCard } from '@/components/layout/home/AnimeCard';
+import GenreFilter from '@/components/ui/GenreFilter';
+import { GENRES } from '@/components/common/config/genre.config';
+import { useState } from 'react';
 export function GenreResults() {
   const searchParams = useSearchParams();
   const selectedGenres = searchParams.get('genres')?.split(',').filter(Boolean) ?? [];
   const page = Number(searchParams.get('page')) || 1;
-
+  const [genre,setGenre] = useState([])
   const { data, isFetching, isError, refetch } = useGenreAnime(selectedGenres, page);
 
   return (
     <>
-      <GenreFilter />
+
+    {GENRES.map((item,index)=>(
+      <>
+      <GenreFilter onSelect={setGenre} genre={genre}/>
+      </>
+    ))}
+      
 
       <div className="mx-auto mt-8 grid max-w-7xl grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6">
         <DataRender
