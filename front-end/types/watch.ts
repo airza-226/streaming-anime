@@ -8,6 +8,9 @@ export type WatchData = {
     title: string;
     posterUrl: string;
     totalEpisodes: number;
+    synopsis: string;
+    genres: string[];
+    status: 'ongoing' | 'completed' | 'upcoming'|'dropped';
+    releaseYear?: number;
   };
-  episodes: Episode[];
 };

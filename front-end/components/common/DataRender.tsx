@@ -1,4 +1,5 @@
 import React from "react";
+import { ErrorState } from "./components/ErrorState";
 
 interface DataRenderProps<T> {
   loading: boolean;
@@ -7,14 +8,18 @@ interface DataRenderProps<T> {
   data: T[] | null | undefined;
   empty?: React.ReactNode;
   render: (item: T, index: number) => React.ReactNode;
+  error?:boolean
+  onRetry?:()=> void
 }
 
 export function DataRender<T>({
   loading,
   skeleton,
   data,
+  onRetry,
   empty = "Data tidak ditemukan",
   render,
+  error
 }: DataRenderProps<T>) {
   if (loading) {
     if (!skeleton) return null;
@@ -25,6 +30,9 @@ export function DataRender<T>({
         ))}
       </>
     );
+  }
+  if(error) {
+    return <ErrorState onRetry={onRetry} />
   }
 
   if (!data || data.length === 0) {
